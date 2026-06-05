@@ -23,7 +23,34 @@ const getFavouritesBtn = document.getElementById("getFavouritesBtn");
  *  - Each option should display text equal to the name of the breed.
  * This function should execute immediately.
  */
+export async function initialLoad() {
+  try {
+    const response = await fetch("https://api.thecatapi.com/v1/breeds", {
+      headers: { "x-api-key": API_KEY }
+    });
+    const breeds = await response.json();
 
+    const op = document.createElement("option");
+    op.textContent = "Select a cat breed!";
+    op.value = "";
+    op.disabled = true;
+    op.selected = true;
+
+    breedSelect.appendChild(op);
+
+    breeds.forEach(breed => {
+      const opt = document.createElement("option");
+      opt.value = breed.id;
+      opt.textContent = breed.name;
+      breedSelect.appendChild(opt);
+    });
+    //breedSelect.addEventListener('change', breedSelectHandler);
+  } catch (err) {
+    console.log("Error: ", err.message);
+  }
+
+}
+initialLoad();
 /**
  * 2. Create an event handler for breedSelect that does the following:
  * - Retrieve information on the selected breed from the cat API using fetch().
@@ -38,6 +65,7 @@ const getFavouritesBtn = document.getElementById("getFavouritesBtn");
  * - Each new selection should clear, re-populate, and restart the Carousel.
  * - Add a call to this function to the end of your initialLoad function above to create the initial carousel.
  */
+
 
 /**
  * 3. Fork your own sandbox, creating a new one named "JavaScript Axios Lab."
