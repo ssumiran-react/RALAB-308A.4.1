@@ -44,8 +44,8 @@ export async function initialLoad() {
     op.selected = true;
 
     breedSelect.appendChild(op);
-    
-    breeds.data.forEach( (breed) => { 
+
+    breeds.data.forEach((breed) => {
       const opt = document.createElement("option");
       opt.value = breed.id;
       opt.textContent = breed.name;
@@ -86,15 +86,15 @@ async function breedSelectHandler() {
 
     //Using Axios method
     const selectedBreed = await axios.get(catBasedURL + "/v1/images/search?breed_ids=" + breedId);
-    
-    selectedBreed.datag.forEach(data => {
+
+    selectedBreed.data.forEach(data => {
       const carouselItem = Carousel.createCarouselItem(data.url, breedId, data.id)
       Carousel.appendCarousel(carouselItem);
     });
     Carousel.start();
   }
   catch (err) {
-    console.log("Error: ", err);
+    console.log("Error: ", err.message);
   }
 }
 
@@ -121,6 +121,24 @@ loading()
  * - Add a console.log statement to indicate when requests begin.
  * - As an added challenge, try to do this on your own without referencing the lesson material.
  */
+// Add a request interceptor
+axios.interceptors.request.use(
+  request => {
+    request.metadata = request.metadata || {};
+    request.metadata.startTime = new Date().getTime();
+    return request;
+  }
+);
+
+// Add a response interceptor
+axios.interceptors.response.use(
+  (response) => {
+    response.config.metadata.endTime = new Date().getTime();
+    response.durationInMS = response.config.metadata.endTime - response.config.metadata.startTime;
+    console.log("In response date: ", response.durationInMS, " milliseconds.");
+    return response;
+  }
+);
 
 /**
  * 6. Next, we'll create a progress bar to indicate the request is in progress.
