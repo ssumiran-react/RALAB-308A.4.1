@@ -72,20 +72,22 @@ export async function initialLoad() {
  * - Each new selection should clear, re-populate, and restart the Carousel.
  * - Add a call to this function to the end of your initialLoad function above to create the initial carousel.
  */
-async function breedSelectHandler() {
+async function breedSelectHandler() { console.log(breedSelect.value);
   const breedId = breedSelect.value;
   infoDump.innerHTML = '';
   Carousel.clear()
   try {
+    //https://api.thecatapi.com/v1/images/search?limit=10&breed_ids=beng&api_key=REPLACE_ME
+    
     //Using fetch method
     /*const catBreed = await fetch(catBasedURL + "/v1/images/search?breed_ids=" + breedId, {
       headers: { "x-api-key": API_KEY }
     });
     const selectedBreed = await catBreed.json();
     */
-
+    
     //Using Axios method
-    const selectedBreed = await axios.get(catBasedURL + "/v1/images/search?breed_ids=" + breedId,
+    const selectedBreed = await axios.get(catBasedURL + "/v1/images/search?limit=10&breed_ids=" + breedId,
       {
         onDownloadProgress: function (progressEvent) {
           if (progressEvent.lengthComputable) {
