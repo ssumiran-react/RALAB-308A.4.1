@@ -85,7 +85,19 @@ async function breedSelectHandler() {
     */
 
     //Using Axios method
-    const selectedBreed = await axios.get(catBasedURL + "/v1/images/search?breed_ids=" + breedId);
+    const selectedBreed = await axios.get(catBasedURL + "/v1/images/search?breed_ids=" + breedId,
+      {
+        onDownloadProgress: function (progressEvent) {
+          if (progressEvent.lengthComputable) {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            progressBar.style.width = percentCompleted + '%';
+            progressBar.textContent = percentCompleted + '%';
+          } else {
+            progressBar.textContent = 'Downloading...';
+          }
+        }
+      }
+    );
 
     selectedBreed.data.forEach(data => {
       const carouselItem = Carousel.createCarouselItem(data.url, breedId, data.id)
@@ -126,6 +138,7 @@ axios.interceptors.request.use(
   request => {
     request.metadata = request.metadata || {};
     request.metadata.startTime = new Date().getTime();
+    document.body.style.cursor = "progress"
     return request;
   }
 );
@@ -136,6 +149,7 @@ axios.interceptors.response.use(
     response.config.metadata.endTime = new Date().getTime();
     response.durationInMS = response.config.metadata.endTime - response.config.metadata.startTime;
     console.log("In response date: ", response.durationInMS, " milliseconds.");
+    document.body.style.cursor = "default";
     return response;
   }
 );
